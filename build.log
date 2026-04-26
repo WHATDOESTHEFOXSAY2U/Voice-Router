@@ -1,7 +1,7 @@
 Command line invocation:
     /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project VoiceRouter.xcodeproj -scheme VoiceRouter -destination id=00008140-000E5DA8219B001C -allowProvisioningUpdates build
 
-2026-04-26 11:44:19.653 xcodebuild[39336:4293862] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-04-26 11:54:51.961 xcodebuild[39679:4308387] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
 ComputePackagePrebuildTargetDependencyGraph
 
 Prepare packages
@@ -21,67 +21,41 @@ GatherProvisioningInputs
 
 CreateBuildDescription
 
-ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk -x c -c /dev/null
-
-ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/parthm1/Desktop/Monolauge App/VoiceRouter/Resources/Assets.xcassets
-
-ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
-
-ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
-
-ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
-
-Build description signature: 8c914067984efd9fa4c42c0a15f2c29a
-Build description path: /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/XCBuildData/8c914067984efd9fa4c42c0a15f2c29a.xcbuilddata
 ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk /Users/parthm1/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.4-23E252-68a138bb55de9ba35ce6c8c40d12849e.sdkstatcache
     cd /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter.xcodeproj
     /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk -o /Users/parthm1/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.4-23E252-68a138bb55de9ba35ce6c8c40d12849e.sdkstatcache
-
-Ld /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/__preview.dylib normal (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0 -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk -O0 -L/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos -F/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos -install_name @rpath/VoiceRouter.debug.dylib -Xlinker -dead_strip -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter_dependency_info.dat -Xlinker -no_adhoc_codesign -o /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/__preview.dylib
-
-CompileAssetCatalogVariant thinned /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Resources/Assets.xcassets (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Resources/Assets.xcassets --compile /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --filter-for-thinning-device-configuration iPhone17,1 --filter-for-device-os-version 26.4.1 --development-region en --target-device iphone --minimum-deployment-target 17.0 --platform iphoneos
-/* com.apple.actool.compilation-results */
-/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_generated_info.plist_thinned
-/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_output/thinned/AppIcon60x60@2x.png
-/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_output/thinned/AppIcon76x76@2x~ipad.png
-/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_output/thinned/Assets.car
-
 
 SwiftDriver VoiceRouter normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App
     builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VoiceRouter -Onone @/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk -target arm64-apple-ios17.0 -g -module-cache-path /Users/parthm1/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos -F /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/parthm1/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.4-23E252-68a138bb55de9ba35ce6c8c40d12849e.sdkstatcache -output-file-map /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/parthm1/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/parthm1/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/parthm1/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter_const_extract_protocols.json -Xcc -iquote -Xcc /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-generated-files.hmap -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-own-target-headers.hmap -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-all-target-headers.hmap -Xcc -iquote -Xcc /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-project-headers.hmap -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/include -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/DerivedSources-normal/arm64 -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/DerivedSources/arm64 -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter-Swift.h -working-directory /Users/parthm1/Desktop/Monolauge\ App -experimental-emit-module-separately -disable-cmo
 
-SwiftCompile normal arm64 Compiling\ Capture.swift,\ CaptureLaunchRequest.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Models/Capture.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/App/CaptureLaunchRequest.swift (in target 'VoiceRouter' from project 'VoiceRouter')
+SwiftCompile normal arm64 Compiling\ AppleIntelligenceFormatter.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Services/AppleIntelligenceFormatter.swift (in target 'VoiceRouter' from project 'VoiceRouter')
 
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Models/Capture.swift (in target 'VoiceRouter' from project 'VoiceRouter')
+SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Services/AppleIntelligenceFormatter.swift (in target 'VoiceRouter' from project 'VoiceRouter')
+    cd /Users/parthm1/Desktop/Monolauge\ App
+    
+/Users/parthm1/Desktop/Monolauge App/VoiceRouter/Services/AppleIntelligenceFormatter.swift:94:23: warning: no 'async' operations occur within 'await' expression
+                guard await self.availabilityStatus().isReady else { return }
+                      ^
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ VoiceRouter (in target 'VoiceRouter' from project 'VoiceRouter')
+
+EmitSwiftModule normal arm64 (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App
     
 
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/App/CaptureLaunchRequest.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftCompile normal arm64 Compiling\ CaptureStore.swift,\ CaptureView.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Storage/CaptureStore.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/CaptureView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Storage/CaptureStore.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
+SwiftCompile normal arm64 Compiling\ CaptureView.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/CaptureView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
 SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/CaptureView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App
     
-/Users/parthm1/Desktop/Monolauge App/VoiceRouter/Views/CaptureView.swift:129:10: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
+/Users/parthm1/Desktop/Monolauge App/VoiceRouter/Views/CaptureView.swift:103:10: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
         .onChange(of: viewModel.speechService.transcript) { _ in
          ^
-/Users/parthm1/Desktop/Monolauge App/VoiceRouter/Views/CaptureView.swift:132:10: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
+/Users/parthm1/Desktop/Monolauge App/VoiceRouter/Views/CaptureView.swift:106:10: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
         .onChange(of: settings.useAppleIntelligenceFormatting) { _ in
          ^
 
-SwiftCompile normal arm64 Compiling\ SpeechService.swift,\ StartCaptureIntent.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Services/SpeechService.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/App/StartCaptureIntent.swift (in target 'VoiceRouter' from project 'VoiceRouter')
+SwiftCompile normal arm64 Compiling\ SpeechService.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Services/SpeechService.swift (in target 'VoiceRouter' from project 'VoiceRouter')
 
 SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Services/SpeechService.swift (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App
@@ -101,82 +75,11 @@ SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Serv
                                                                                               ^~~~~~~~~~~~~~
                                                                                               AVAudioSession.CategoryOptions.allowBluetoothHFP
 
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/App/StartCaptureIntent.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftCompile normal arm64 Compiling\ ContentView.swift,\ HistoryView.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/ContentView.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/HistoryView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/ContentView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/HistoryView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftCompile normal arm64 Compiling\ CaptureViewModel.swift,\ ClipboardWriter.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/ViewModels/CaptureViewModel.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Services/ClipboardWriter.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/ViewModels/CaptureViewModel.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Services/ClipboardWriter.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftEmitModule normal arm64 Emitting\ module\ for\ VoiceRouter (in target 'VoiceRouter' from project 'VoiceRouter')
-
-EmitSwiftModule normal arm64 (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftCompile normal arm64 Compiling\ AppSettingsStore.swift,\ AppleIntelligenceFormatter.swift,\ Branding.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Storage/AppSettingsStore.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Services/AppleIntelligenceFormatter.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/Branding.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Storage/AppSettingsStore.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Services/AppleIntelligenceFormatter.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/Branding.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftCompile normal arm64 Compiling\ ResultCardView.swift,\ SettingsView.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/ResultCardView.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/SettingsView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/ResultCardView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Views/SettingsView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
 SwiftDriverJobDiscovery normal arm64 Emitting module for VoiceRouter (in target 'VoiceRouter' from project 'VoiceRouter')
 
 SwiftDriver\ Compilation\ Requirements VoiceRouter normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App
     builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VoiceRouter -Onone @/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk -target arm64-apple-ios17.0 -g -module-cache-path /Users/parthm1/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos -F /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/parthm1/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.4-23E252-68a138bb55de9ba35ce6c8c40d12849e.sdkstatcache -output-file-map /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/parthm1/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/parthm1/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/parthm1/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter_const_extract_protocols.json -Xcc -iquote -Xcc /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-generated-files.hmap -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-own-target-headers.hmap -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-all-target-headers.hmap -Xcc -iquote -Xcc /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-project-headers.hmap -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/include -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/DerivedSources-normal/arm64 -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/DerivedSources/arm64 -Xcc -I/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter-Swift.h -working-directory /Users/parthm1/Desktop/Monolauge\ App -experimental-emit-module-separately -disable-cmo
-
-SwiftDriverJobDiscovery normal arm64 Compiling Capture.swift, CaptureLaunchRequest.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-
-SwiftCompile normal arm64 Compiling\ VoiceRouterApp.swift,\ GeneratedAssetSymbols.swift /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/App/VoiceRouterApp.swift /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-
-SwiftCompile normal arm64 /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/App/VoiceRouterApp.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-/Users/parthm1/Desktop/Monolauge App/VoiceRouter/App/VoiceRouterApp.swift:25:18: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
-                .onChange(of: scenePhase) { newPhase in
-                 ^
-
-SwiftCompile normal arm64 /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    
-
-SwiftDriverJobDiscovery normal arm64 Compiling CaptureViewModel.swift, ClipboardWriter.swift (in target 'VoiceRouter' from project 'VoiceRouter')
 
 Copy /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter.swiftsourceinfo (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App
@@ -190,17 +93,11 @@ Copy /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqri
     cd /Users/parthm1/Desktop/Monolauge\ App
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter.abi.json /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.swiftmodule/arm64-apple-ios.abi.json
 
-SwiftDriverJobDiscovery normal arm64 Compiling SpeechService.swift, StartCaptureIntent.swift (in target 'VoiceRouter' from project 'VoiceRouter')
+SwiftDriverJobDiscovery normal arm64 Compiling AppleIntelligenceFormatter.swift (in target 'VoiceRouter' from project 'VoiceRouter')
 
-SwiftDriverJobDiscovery normal arm64 Compiling AppSettingsStore.swift, AppleIntelligenceFormatter.swift, Branding.swift (in target 'VoiceRouter' from project 'VoiceRouter')
+SwiftDriverJobDiscovery normal arm64 Compiling SpeechService.swift (in target 'VoiceRouter' from project 'VoiceRouter')
 
-SwiftDriverJobDiscovery normal arm64 Compiling ContentView.swift, HistoryView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-
-SwiftDriverJobDiscovery normal arm64 Compiling VoiceRouterApp.swift, GeneratedAssetSymbols.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-
-SwiftDriverJobDiscovery normal arm64 Compiling ResultCardView.swift, SettingsView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
-
-SwiftDriverJobDiscovery normal arm64 Compiling CaptureStore.swift, CaptureView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
+SwiftDriverJobDiscovery normal arm64 Compiling CaptureView.swift (in target 'VoiceRouter' from project 'VoiceRouter')
 
 SwiftDriver\ Compilation VoiceRouter normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App
@@ -219,27 +116,16 @@ Ld /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuf
     cd /Users/parthm1/Desktop/Monolauge\ App
     /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk -O0 -L/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos -F/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/Frameworks -rdynamic -Xlinker -no_deduplicate -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter-ExecutorLinkFileList-normal-arm64.txt /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/VoiceRouter.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/VoiceRouter
 
-LinkAssetCatalog /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Resources/Assets.xcassets (in target 'VoiceRouter' from project 'VoiceRouter')
+CopySwiftLibs /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App
-    builtin-linkAssetCatalog --thinned /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_output/thinned --thinned-dependencies /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_generated_info.plist_unthinned --output /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app --plist-output /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_generated_info.plist
-note: Emplaced /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/AppIcon60x60@2x.png (in target 'VoiceRouter' from project 'VoiceRouter')
-note: Emplaced /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/AppIcon76x76@2x~ipad.png (in target 'VoiceRouter' from project 'VoiceRouter')
-note: Emplaced /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Assets.car (in target 'VoiceRouter' from project 'VoiceRouter')
-
-ProcessInfoPlistFile /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Info.plist /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Info.plist (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    builtin-infoPlistUtility /Users/parthm1/Desktop/Monolauge\ App/VoiceRouter/Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/PkgInfo -expandbuildsettings -format binary -platform iphoneos -additionalcontentfile /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/assetcatalog_generated_info.plist -requiredArchitecture arm64 -o /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Info.plist
+    builtin-swiftStdLibTool --copy --verbose --sign 62DB493401B78FCC9C5454E5210DC5A366DF6AE1 --scan-executable /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/VoiceRouter.debug.dylib --scan-folder /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Frameworks --scan-folder /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/PlugIns --scan-folder /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/SystemExtensions --scan-folder /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Extensions --platform iphoneos --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
 
 ExtractAppIntentsMetadata (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App
     /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name VoiceRouter --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk --xcode-version 17E202 --platform-family iOS --deployment-target 17.0 --bundle-identifier com.voicerouter.app --output /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app --target-triple arm64-apple-ios17.0 --binary-file /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/VoiceRouter --dependency-file /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter_dependency_info.dat --stringsdata-file /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter.SwiftFileList --metadata-file-list /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter.DependencyMetadataFileList --static-metadata-file-list /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/VoiceRouter.DependencyStaticMetadataFileList --swift-const-vals-list /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/Objects-normal/arm64/VoiceRouter.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
-2026-04-26 11:44:25.985 appintentsmetadataprocessor[39379:4294294] Starting appintentsmetadataprocessor export
-2026-04-26 11:44:26.005 appintentsmetadataprocessor[39379:4294294] Writing Metadata.appintents
-2026-04-26 11:44:26.005 appintentsmetadataprocessor[39379:4294294] Metadata root: /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Metadata.appintents
-
-CopySwiftLibs /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app (in target 'VoiceRouter' from project 'VoiceRouter')
-    cd /Users/parthm1/Desktop/Monolauge\ App
-    builtin-swiftStdLibTool --copy --verbose --sign 62DB493401B78FCC9C5454E5210DC5A366DF6AE1 --scan-executable /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/VoiceRouter.debug.dylib --scan-folder /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Frameworks --scan-folder /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/PlugIns --scan-folder /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/SystemExtensions --scan-folder /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Extensions --platform iphoneos --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Intermediates.noindex/VoiceRouter.build/Debug-iphoneos/VoiceRouter.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+2026-04-26 11:54:55.101 appintentsmetadataprocessor[39700:4308622] Starting appintentsmetadataprocessor export
+2026-04-26 11:54:55.121 appintentsmetadataprocessor[39700:4308622] Writing Metadata.appintents
+2026-04-26 11:54:55.121 appintentsmetadataprocessor[39700:4308622] Metadata root: /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/Metadata.appintents
 
 CodeSign /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/VoiceRouter.debug.dylib (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App
@@ -258,6 +144,7 @@ CodeSign /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhww
                           (afd5c96d-ea74-4bdf-9f7f-392e7ee3c1d0)
     
     /usr/bin/codesign --force --sign 62DB493401B78FCC9C5454E5210DC5A366DF6AE1 --timestamp\=none --generate-entitlement-der /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/__preview.dylib
+/Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app/__preview.dylib: replacing existing signature
 
 CodeSign /Users/parthm1/Library/Developer/Xcode/DerivedData/VoiceRouter-guopzhwwpqriuffwismpybimtmzp/Build/Products/Debug-iphoneos/VoiceRouter.app (in target 'VoiceRouter' from project 'VoiceRouter')
     cd /Users/parthm1/Desktop/Monolauge\ App

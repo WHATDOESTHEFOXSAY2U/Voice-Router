@@ -90,8 +90,12 @@ final class AppleIntelligenceFormatter {
 
 #if canImport(FoundationModels)
         if #available(iOS 26.0, *) {
-            guard availabilityStatus().isReady else { return }
-            _ = sessionIfNeeded()
+            Task.detached {
+                guard await self.availabilityStatus().isReady else { return }
+                await MainActor.run {
+                    _ = self.sessionIfNeeded()
+                }
+            }
         }
 #endif
     }

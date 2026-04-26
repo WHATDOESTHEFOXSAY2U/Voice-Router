@@ -204,10 +204,17 @@ final class SpeechService: ObservableObject {
             // Best-effort prewarm only.
         }
 
-        _ = currentSpeechRecognizer()?.isAvailable
-        _ = currentSpeechRecognizer()?.supportsOnDeviceRecognition
-        audioEngine.prepare()
-        didPrewarmAudioEngine = true
+        Task.detached {
+            _ = await self.currentSpeechRecognizer()?.isAvailable
+            _ = await self.currentSpeechRecognizer()?.supportsOnDeviceRecognition
+            
+            let engine = await self.audioEngine
+            engine.prepare()
+            
+            await MainActor.run {
+                self.didPrewarmAudioEngine = true
+            }
+        }
     }
 
     private func requestMicrophonePermission() async -> Bool {

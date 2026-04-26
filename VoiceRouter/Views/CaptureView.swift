@@ -30,65 +30,39 @@ private struct CaptureViewInner: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                background
+        ZStack {
+            background
+                .allowsHitTesting(false)
 
-                VStack(spacing: 0) {
-                    statusPill
-                        .padding(.horizontal, 20)
-                        .padding(.top, 10)
-                        .padding(.bottom, 14)
+            VStack(spacing: 0) {
+                customHeader
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                    .padding(.bottom, 12)
 
-                    ScrollView(showsIndicators: false) {
-                        VStack(alignment: .leading, spacing: 18) {
-                            summaryCard
-                            transcriptPanel
+                statusPill
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 16)
+                    .zIndex(1)
 
-                            if case .result = viewModel.state, let capture = viewModel.lastCapture {
-                                ResultCardView(capture: capture) {
-                                    withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
-                                        viewModel.reset()
-                                    }
-                                } onRetry: {
-                                    viewModel.retryCopy(capture: capture, store: captureStore)
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 18) {
+                        summaryCard
+                        transcriptPanel
+
+                        if case .result = viewModel.state, let capture = viewModel.lastCapture {
+                            ResultCardView(capture: capture) {
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
+                                    viewModel.reset()
                                 }
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                            } onRetry: {
+                                viewModel.retryCopy(capture: capture, store: captureStore)
                             }
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 24)
                     }
-                }
-            }
-            .navigationTitle("Voice Router")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        activeSheet = .history
-                    } label: {
-                        toolbarIcon(systemName: "clock.arrow.circlepath")
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                ToolbarItem(placement: .principal) {
-                    BrandLockupView(
-                        level: viewModel.speechService.audioLevel,
-                        isListening: viewModel.isCaptureActive,
-                        titleSize: 17,
-                        subtitle: nil
-                    )
-                }
-
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        activeSheet = .settings
-                    } label: {
-                        toolbarIcon(systemName: "slider.horizontal.3")
-                    }
-                    .buttonStyle(.plain)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
                 }
             }
         }
@@ -137,6 +111,35 @@ private struct CaptureViewInner: View {
             Task {
                 await viewModel.startCapture(source: source)
             }
+        }
+    }
+
+    private var customHeader: some View {
+        HStack {
+            Button {
+                activeSheet = .history
+            } label: {
+                toolbarIcon(systemName: "clock.arrow.circlepath")
+            }
+            .buttonStyle(.plain)
+
+            Spacer()
+
+            BrandLockupView(
+                level: viewModel.speechService.audioLevel,
+                isListening: viewModel.isCaptureActive,
+                titleSize: 17,
+                subtitle: nil
+            )
+
+            Spacer()
+
+            Button {
+                activeSheet = .settings
+            } label: {
+                toolbarIcon(systemName: "slider.horizontal.3")
+            }
+            .buttonStyle(.plain)
         }
     }
 
