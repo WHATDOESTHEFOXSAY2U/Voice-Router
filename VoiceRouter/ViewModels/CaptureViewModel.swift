@@ -6,6 +6,7 @@ import UIKit
 final class CaptureViewModel: ObservableObject {
     enum CaptureState: Equatable {
         case idle
+        case arming(source: CaptureLaunchSource)
         case listening(source: CaptureLaunchSource)
         case processing(message: String)
         case result(captureId: UUID)
@@ -27,11 +28,22 @@ final class CaptureViewModel: ObservableObject {
         self.speechService = speechService
     }
 
+    var isArming: Bool {
+        if case .arming = state {
+            return true
+        }
+        return false
+    }
+
     var isListening: Bool {
         if case .listening = state {
             return true
         }
         return false
+    }
+
+    var isCaptureActive: Bool {
+        isArming || isListening
     }
 
     var isProcessing: Bool {
@@ -41,8 +53,15 @@ final class CaptureViewModel: ObservableObject {
         return false
     }
 
-    func prepare() async {
+    func prepare(settings: AppSettingsStore) async {
         _ = await speechService.ensureAuthorization()
+        speechService.prewarmForQuickCapture()
+        formatter.prewarmIfPossible(preferFormatting: settings.useAppleIntelligenceFormatting)
+    }
+
+    func prewarmForCurrentSettings(_ settings: AppSettingsStore) {
+        speechService.prewarmForQuickCapture()
+        formatter.prewarmIfPossible(preferFormatting: settings.useAppleIntelligenceFormatting)
     }
 
     func startCapture(source: CaptureLaunchSource = .manual) async {
@@ -53,6 +72,7 @@ final class CaptureViewModel: ObservableObject {
         }
 
         clearTransientState()
+        state = .arming(source: source)
 
         let authorized = await speechService.ensureAuthorization()
         guard authorized else {
@@ -62,6 +82,8 @@ final class CaptureViewModel: ObservableObject {
 
         do {
             try speechService.startRecording()
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.impactOccurred()
             state = .listening(source: source)
         } catch {
             state = .error(message: error.localizedDescription)
@@ -145,7 +167,7 @@ final class CaptureViewModel: ObservableObject {
         }
 
         let processingMessage = settings.useAppleIntelligenceFormatting
-            ? "Cleaning up your dictation..."
+            ? "Polishing your dictation..."
             : "Copying to clipboard..."
         state = .processing(message: processingMessage)
 

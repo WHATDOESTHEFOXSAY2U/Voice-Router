@@ -21,7 +21,7 @@ final class AppSettingsStore: ObservableObject {
         self.defaults = defaults
         self.useAppleIntelligenceFormatting = defaults.object(forKey: Keys.useAppleIntelligenceFormatting) as? Bool ?? false
         self.automaticallyFinishAfterPause = defaults.object(forKey: Keys.automaticallyFinishAfterPause) as? Bool ?? true
-        self.pauseDuration = defaults.object(forKey: Keys.pauseDuration) as? Double ?? 1.15
+        self.pauseDuration = defaults.object(forKey: Keys.pauseDuration) as? Double ?? 0.75
     }
 
     private enum Keys {

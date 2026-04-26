@@ -20,19 +20,33 @@ struct VoiceRouterApp: App {
                 .environmentObject(speechService)
                 .environmentObject(settings)
                 .task {
-                    dispatchPendingCaptureIfNeeded()
+                    schedulePendingCaptureDispatch()
                 }
                 .onChange(of: scenePhase) { newPhase in
                     guard newPhase == .active else { return }
-                    dispatchPendingCaptureIfNeeded()
+                    schedulePendingCaptureDispatch()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .captureLaunchQueued)) { _ in
+                    schedulePendingCaptureDispatch()
                 }
                 .onOpenURL { url in
                     guard url.scheme == "voicerouter", url.host == "capture" else { return }
                     CaptureLaunchRequest.queue(source: .urlScheme)
                     DispatchQueue.main.async {
-                        dispatchPendingCaptureIfNeeded()
+                        schedulePendingCaptureDispatch()
                     }
                 }
+        }
+    }
+
+    private func schedulePendingCaptureDispatch() {
+        dispatchPendingCaptureIfNeeded()
+
+        let retryDelays: [TimeInterval] = [0.18, 0.55, 1.1]
+        for delay in retryDelays {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                dispatchPendingCaptureIfNeeded()
+            }
         }
     }
 

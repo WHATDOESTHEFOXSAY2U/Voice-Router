@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 
 enum CaptureOutputStyle: String, Codable, CaseIterable {
     case transcript
@@ -36,13 +37,13 @@ enum CaptureOutputStyle: String, Codable, CaseIterable {
     var color: Color {
         switch self {
         case .transcript:
-            return Color(red: 0.36, green: 0.82, blue: 0.92)
+            return Color(uiColor: .systemBlue)
         case .appleIntelligence:
-            return Color(red: 0.99, green: 0.75, blue: 0.33)
+            return Color(uiColor: .systemOrange)
         case .fallbackTranscript:
-            return Color(red: 0.98, green: 0.56, blue: 0.28)
+            return Color(uiColor: .systemPink)
         case .legacySmartFormat:
-            return Color(red: 0.63, green: 0.64, blue: 0.71)
+            return Color(uiColor: .systemGray)
         }
     }
 }

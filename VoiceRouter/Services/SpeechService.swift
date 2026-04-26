@@ -42,23 +42,28 @@ final class SpeechService: ObservableObject {
     }
 
     private let audioEngine = AVAudioEngine()
+    private let audioSession = AVAudioSession.sharedInstance()
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var hasInstalledTap = false
+    private var didPrewarmAudioEngine = false
+    private var speechRecognizer: SFSpeechRecognizer?
+    private var recognizerLocaleIdentifier: String?
 
-    private var speechRecognizer: SFSpeechRecognizer? {
-        SFSpeechRecognizer(locale: Locale.autoupdatingCurrent)
+    var supportsOnDeviceRecognition: Bool {
+        currentSpeechRecognizer()?.supportsOnDeviceRecognition ?? false
     }
 
     func ensureAuthorization() async -> Bool {
         if isAuthorized {
+            prewarmForQuickCapture()
             return true
         }
 
         authorizationStatus = .requesting
         errorMessage = nil
 
-        guard speechRecognizer != nil else {
+        guard currentSpeechRecognizer() != nil else {
             authorizationStatus = .recognizerUnavailable
             errorMessage = authorizationStatus.guidance
             return false
@@ -79,6 +84,7 @@ final class SpeechService: ObservableObject {
         }
 
         authorizationStatus = .authorized
+        prewarmForQuickCapture()
         return true
     }
 
@@ -87,7 +93,7 @@ final class SpeechService: ObservableObject {
             throw SpeechError.notAuthorized
         }
 
-        guard let recognizer = speechRecognizer else {
+        guard let recognizer = currentSpeechRecognizer() else {
             throw SpeechError.recognizerUnavailable
         }
 
@@ -102,13 +108,16 @@ final class SpeechService: ObservableObject {
         recognitionTask?.cancel()
         recognitionTask = nil
 
-        let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+        try audioSession.setCategory(.record, mode: .measurement, options: [.duckOthers, .allowBluetooth])
+        try audioSession.setPreferredIOBufferDuration(0.005)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
 
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
         request.taskHint = .dictation
+        if recognizer.supportsOnDeviceRecognition {
+            request.requiresOnDeviceRecognition = true
+        }
         if #available(iOS 16, *) {
             request.addsPunctuation = true
         }
@@ -156,7 +165,10 @@ final class SpeechService: ObservableObject {
         audioLevel = 0.08
         errorMessage = nil
 
-        audioEngine.prepare()
+        if !didPrewarmAudioEngine {
+            audioEngine.prepare()
+            didPrewarmAudioEngine = true
+        }
         try audioEngine.start()
         isRecording = true
     }
@@ -178,7 +190,24 @@ final class SpeechService: ObservableObject {
         isRecording = false
         audioLevel = 0.08
 
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        try? audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+        prewarmForQuickCapture()
+    }
+
+    func prewarmForQuickCapture() {
+        guard isAuthorized else { return }
+
+        do {
+            try audioSession.setCategory(.record, mode: .measurement, options: [.duckOthers, .allowBluetooth])
+            try audioSession.setPreferredIOBufferDuration(0.005)
+        } catch {
+            // Best-effort prewarm only.
+        }
+
+        _ = currentSpeechRecognizer()?.isAvailable
+        _ = currentSpeechRecognizer()?.supportsOnDeviceRecognition
+        audioEngine.prepare()
+        didPrewarmAudioEngine = true
     }
 
     private func requestMicrophonePermission() async -> Bool {
@@ -195,6 +224,17 @@ final class SpeechService: ObservableObject {
                 continuation.resume(returning: status)
             }
         }
+    }
+
+    private func currentSpeechRecognizer() -> SFSpeechRecognizer? {
+        let localeIdentifier = Locale.autoupdatingCurrent.identifier
+
+        if recognizerLocaleIdentifier != localeIdentifier || speechRecognizer == nil {
+            speechRecognizer = SFSpeechRecognizer(locale: Locale.autoupdatingCurrent)
+            recognizerLocaleIdentifier = localeIdentifier
+        }
+
+        return speechRecognizer
     }
 
     private static func normalizedAudioLevel(from buffer: AVAudioPCMBuffer) -> CGFloat {

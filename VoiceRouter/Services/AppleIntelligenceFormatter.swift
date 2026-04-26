@@ -17,6 +17,20 @@ struct AppleIntelligenceAvailabilityStatus {
 }
 
 final class AppleIntelligenceFormatter {
+    private static let formattingInstructions = """
+        You clean up dictation for clipboard use.
+        Preserve the original meaning and language.
+        Remove filler words, false starts, and repeated fragments.
+        Fix punctuation, capitalization, and obvious speech artifacts.
+        Keep the result natural and concise.
+        Return only the rewritten text.
+        """
+
+#if canImport(FoundationModels)
+    @available(iOS 26.0, *)
+    private var session: LanguageModelSession?
+#endif
+
     func availabilityStatus() -> AppleIntelligenceAvailabilityStatus {
 #if canImport(FoundationModels)
         if #available(iOS 26.0, *) {
@@ -72,6 +86,17 @@ final class AppleIntelligenceFormatter {
         )
     }
 
+    func prewarmIfPossible(preferFormatting: Bool) {
+        guard preferFormatting else { return }
+
+#if canImport(FoundationModels)
+        if #available(iOS 26.0, *) {
+            guard availabilityStatus().isReady else { return }
+            _ = sessionIfNeeded()
+        }
+#endif
+    }
+
     func prepareClipboardOutput(from transcript: String, preferFormatting: Bool) async -> ClipboardOutput {
         let trimmed = transcript.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -92,23 +117,13 @@ final class AppleIntelligenceFormatter {
             }
 
             do {
-                let session = LanguageModelSession(instructions: """
-                    You clean up dictation for clipboard use.
-                    Preserve the original meaning and language.
-                    Remove filler words, false starts, and repeated fragments.
-                    Fix punctuation, capitalization, and obvious speech artifacts.
-                    Keep the result natural and concise.
-                    Return only the rewritten text.
-                    """
-                )
-
                 let prompt = """
                     Clean up this dictated text so it is ready to paste into another app:
 
                     \(trimmed)
                     """
 
-                let response = try await session.respond(to: prompt)
+                let response = try await sessionIfNeeded().respond(to: prompt)
                 let polished = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
 
                 guard !polished.isEmpty else {
@@ -136,6 +151,19 @@ final class AppleIntelligenceFormatter {
             note: "Apple Intelligence formatting is not available in this build, so the raw transcript was copied."
         )
     }
+
+#if canImport(FoundationModels)
+    @available(iOS 26.0, *)
+    private func sessionIfNeeded() -> LanguageModelSession {
+        if let session {
+            return session
+        }
+
+        let created = LanguageModelSession(instructions: Self.formattingInstructions)
+        session = created
+        return created
+    }
+#endif
 
     private enum FormatterError: Error {
         case emptyResponse

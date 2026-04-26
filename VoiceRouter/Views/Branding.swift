@@ -1,26 +1,27 @@
 import SwiftUI
+import UIKit
 
 enum VoiceRouterTheme {
-    static let canvasTop = Color(red: 0.04, green: 0.05, blue: 0.09)
-    static let canvasMid = Color(red: 0.09, green: 0.12, blue: 0.20)
-    static let canvasBottom = Color(red: 0.03, green: 0.04, blue: 0.07)
+    static let canvasTop = Color(uiColor: .systemGroupedBackground)
+    static let canvasMid = Color(uiColor: .secondarySystemGroupedBackground)
+    static let canvasBottom = Color(uiColor: .systemBackground)
 
-    static let textPrimary = Color(red: 0.97, green: 0.95, blue: 0.92)
-    static let textSecondary = Color(red: 0.79, green: 0.80, blue: 0.84)
-    static let textMuted = Color(red: 0.57, green: 0.61, blue: 0.68)
+    static let textPrimary = Color(uiColor: .label)
+    static let textSecondary = Color(uiColor: .secondaryLabel)
+    static let textMuted = Color(uiColor: .tertiaryLabel)
 
-    static let coolCyan = Color(red: 0.39, green: 0.86, blue: 0.96)
-    static let freshMint = Color(red: 0.55, green: 0.95, blue: 0.78)
-    static let warmAmber = Color(red: 1.0, green: 0.77, blue: 0.40)
-    static let softCoral = Color(red: 1.0, green: 0.46, blue: 0.35)
-    static let paper = Color(red: 0.97, green: 0.94, blue: 0.87)
+    static let coolCyan = Color(uiColor: .systemBlue)
+    static let freshMint = Color(uiColor: .systemTeal)
+    static let warmAmber = Color(uiColor: .systemOrange)
+    static let softCoral = Color(uiColor: .systemPink)
+    static let paper = Color(uiColor: .systemBackground)
 
-    static let cardFillTop = Color.white.opacity(0.08)
-    static let cardFillBottom = Color.white.opacity(0.03)
-    static let cardStroke = Color.white.opacity(0.10)
+    static let cardFillTop = Color.white.opacity(0.32)
+    static let cardFillBottom = Color.white.opacity(0.08)
+    static let cardStroke = Color(uiColor: .separator).opacity(0.34)
 
-    static let success = Color(red: 0.36, green: 0.86, blue: 0.60)
-    static let warning = Color(red: 0.99, green: 0.62, blue: 0.30)
+    static let success = Color(uiColor: .systemGreen)
+    static let warning = Color(uiColor: .systemOrange)
 }
 
 struct VoiceWaveView: View {
@@ -64,7 +65,7 @@ struct BrandMarkView: View {
                         colors: [
                             VoiceRouterTheme.canvasMid,
                             VoiceRouterTheme.canvasTop,
-                            Color.black
+                            VoiceRouterTheme.canvasBottom
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -105,8 +106,8 @@ struct BrandMarkView: View {
                 .fill(
                     LinearGradient(
                         colors: [
-                            Color(red: 0.13, green: 0.16, blue: 0.25),
-                            Color(red: 0.05, green: 0.06, blue: 0.10)
+                            Color(uiColor: .secondarySystemBackground),
+                            Color(uiColor: .tertiarySystemBackground)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
@@ -214,22 +215,26 @@ private struct VoiceRouterPanelModifier: ViewModifier {
         content
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                VoiceRouterTheme.cardFillTop,
-                                tint.opacity(0.05),
-                                VoiceRouterTheme.cardFillBottom
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: radius, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        VoiceRouterTheme.cardFillTop,
+                                        tint.opacity(0.10),
+                                        VoiceRouterTheme.cardFillBottom
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: radius, style: .continuous)
                             .stroke(VoiceRouterTheme.cardStroke, lineWidth: 1)
                     )
-                    .shadow(color: tint.opacity(0.08), radius: 28, y: 16)
+                    .shadow(color: tint.opacity(0.10), radius: 24, y: 14)
             )
     }
 }

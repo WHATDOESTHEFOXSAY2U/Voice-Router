@@ -14,6 +14,10 @@ enum CaptureLaunchRequest {
         let defaults = UserDefaults.standard
         defaults.set(Date().timeIntervalSince1970, forKey: timestampKey)
         defaults.set(source.rawValue, forKey: sourceKey)
+
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .captureLaunchQueued, object: source)
+        }
     }
 
     static func consumeIfNeeded(maxAge: TimeInterval = 10) -> CaptureLaunchSource? {
@@ -35,5 +39,6 @@ enum CaptureLaunchRequest {
 }
 
 extension Notification.Name {
+    static let captureLaunchQueued = Notification.Name("voicerouter.captureLaunchQueued")
     static let startCapture = Notification.Name("voicerouter.startCapture")
 }

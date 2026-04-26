@@ -17,7 +17,6 @@ private struct CaptureViewInner: View {
     @EnvironmentObject private var settings: AppSettingsStore
     @StateObject private var viewModel: CaptureViewModel
     @State private var activeSheet: ActiveSheet?
-    @State private var pulseScale: CGFloat = 1.0
 
     private enum ActiveSheet: Int, Identifiable {
         case history
@@ -31,41 +30,70 @@ private struct CaptureViewInner: View {
     }
 
     var body: some View {
-        ZStack {
-            background
+        NavigationStack {
+            ZStack {
+                background
 
-            VStack(spacing: 0) {
-                customHeader
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
-                    .padding(.bottom, 16)
+                VStack(spacing: 0) {
+                    statusPill
+                        .padding(.horizontal, 20)
+                        .padding(.top, 10)
+                        .padding(.bottom, 14)
 
-                statusPill
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 20)
-                    .zIndex(1)
+                    ScrollView(showsIndicators: false) {
+                        VStack(alignment: .leading, spacing: 18) {
+                            summaryCard
+                            transcriptPanel
 
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 24) {
-                        heroCopy
-                        transcriptPanel
-                        controlPanel
-
-                        if case .result = viewModel.state, let capture = viewModel.lastCapture {
-                            ResultCardView(capture: capture) {
-                                withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
-                                    viewModel.reset()
+                            if case .result = viewModel.state, let capture = viewModel.lastCapture {
+                                ResultCardView(capture: capture) {
+                                    withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
+                                        viewModel.reset()
+                                    }
+                                } onRetry: {
+                                    viewModel.retryCopy(capture: capture, store: captureStore)
                                 }
-                            } onRetry: {
-                                viewModel.retryCopy(capture: capture, store: captureStore)
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
                             }
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 24)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 36)
                 }
             }
+            .navigationTitle("Voice Router")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        activeSheet = .history
+                    } label: {
+                        toolbarIcon(systemName: "clock.arrow.circlepath")
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                ToolbarItem(placement: .principal) {
+                    BrandLockupView(
+                        level: viewModel.speechService.audioLevel,
+                        isListening: viewModel.isCaptureActive,
+                        titleSize: 17,
+                        subtitle: nil
+                    )
+                }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        activeSheet = .settings
+                    } label: {
+                        toolbarIcon(systemName: "slider.horizontal.3")
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            controlDock
         }
         .overlay(alignment: .bottom) {
             if viewModel.showFeedbackBanner, let feedbackMessage = viewModel.feedbackMessage {
@@ -75,14 +103,15 @@ private struct CaptureViewInner: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .background(
-                        Capsule()
-                            .fill(Color.black.opacity(0.88))
+                        Capsule(style: .continuous)
+                            .fill(Color(uiColor: .secondarySystemBackground).opacity(0.95))
                             .overlay(
-                                Capsule()
+                                Capsule(style: .continuous)
                                     .stroke(VoiceRouterTheme.cardStroke, lineWidth: 1)
                             )
                     )
-                    .padding(.bottom, 18)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 94)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
@@ -95,59 +124,19 @@ private struct CaptureViewInner: View {
             }
         }
         .task {
-            await viewModel.prepare()
+            await viewModel.prepare(settings: settings)
         }
         .onChange(of: viewModel.speechService.transcript) { _ in
             viewModel.handleTranscriptChanged(store: captureStore, settings: settings)
+        }
+        .onChange(of: settings.useAppleIntelligenceFormatting) { _ in
+            viewModel.prewarmForCurrentSettings(settings)
         }
         .onReceive(NotificationCenter.default.publisher(for: .startCapture)) { notification in
             let source = notification.object as? CaptureLaunchSource ?? .manual
             Task {
                 await viewModel.startCapture(source: source)
             }
-        }
-    }
-
-    private var customHeader: some View {
-        HStack {
-            Button {
-                activeSheet = .history
-            } label: {
-                Image(systemName: "clock.arrow.circlepath")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(VoiceRouterTheme.textPrimary)
-                    .frame(width: 38, height: 38)
-                    .background(
-                        Circle()
-                            .fill(Color.white.opacity(0.06))
-                    )
-            }
-            .buttonStyle(.plain)
-
-            Spacer()
-
-            BrandLockupView(
-                level: viewModel.speechService.audioLevel,
-                isListening: viewModel.isListening,
-                titleSize: 16,
-                subtitle: nil
-            )
-
-            Spacer()
-
-            Button {
-                activeSheet = .settings
-            } label: {
-                Image(systemName: "slider.horizontal.3")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(VoiceRouterTheme.textPrimary)
-                    .frame(width: 38, height: 38)
-                    .background(
-                        Circle()
-                            .fill(Color.white.opacity(0.06))
-                    )
-            }
-            .buttonStyle(.plain)
         }
     }
 
@@ -165,78 +154,187 @@ private struct CaptureViewInner: View {
             .ignoresSafeArea()
 
             Circle()
-                .fill(VoiceRouterTheme.coolCyan.opacity(0.20))
-                .frame(width: 320, height: 320)
-                .blur(radius: 40)
-                .offset(x: 110, y: -260)
-
-            Circle()
-                .fill(VoiceRouterTheme.softCoral.opacity(0.18))
+                .fill(VoiceRouterTheme.coolCyan.opacity(0.12))
                 .frame(width: 280, height: 280)
-                .blur(radius: 54)
-                .offset(x: -140, y: 240)
+                .blur(radius: 48)
+                .offset(x: 120, y: -250)
 
             Circle()
-                .fill(VoiceRouterTheme.warmAmber.opacity(0.12))
-                .frame(width: 220, height: 220)
-                .blur(radius: 46)
-                .offset(x: 130, y: 180)
+                .fill(VoiceRouterTheme.softCoral.opacity(0.10))
+                .frame(width: 240, height: 240)
+                .blur(radius: 54)
+                .offset(x: -130, y: 220)
         }
     }
 
-    private var heroCopy: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            HStack {
-                BrandMarkView(
-                    size: 72,
-                    level: viewModel.speechService.audioLevel,
-                    isListening: viewModel.isListening
-                )
-                Spacer()
+    private var statusPill: some View {
+        HStack(spacing: 12) {
+            pillIndicator
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(pillTitle)
+                    .font(.system(.subheadline, design: .rounded))
+                    .fontWeight(.bold)
+                    .foregroundStyle(VoiceRouterTheme.textPrimary)
+
+                Text(pillSubtitle)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(VoiceRouterTheme.textSecondary)
+                    .lineLimit(1)
             }
 
-            heroCopyText
-
-            IslandPreviewCard(
-                title: "Action Button Cue",
-                subtitle: viewModel.isListening
-                    ? "The top capsule is active now, so capture feels immediate before you even check the transcript."
-                    : "Press once and the island-style cue wakes up first, so the app looks alive before you start talking.",
-                level: viewModel.speechService.audioLevel,
-                isListening: viewModel.isListening
-            )
+            Spacer(minLength: 0)
         }
-        .padding(24)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            Capsule(style: .continuous)
+                .fill(Color(uiColor: .secondarySystemBackground).opacity(0.92))
+                .overlay(
+                    Capsule(style: .continuous)
+                        .stroke(VoiceRouterTheme.cardStroke, lineWidth: 1)
+                )
+        )
+        .shadow(color: VoiceRouterTheme.coolCyan.opacity(0.08), radius: 16, y: 8)
+        .animation(.spring(response: 0.35, dampingFraction: 0.82), value: viewModel.state)
+    }
+
+    @ViewBuilder
+    private var pillIndicator: some View {
+        switch viewModel.state {
+        case .idle:
+            Image(systemName: "mic.circle.fill")
+                .font(.system(size: 22))
+                .foregroundStyle(VoiceRouterTheme.coolCyan)
+        case .arming:
+            ProgressView()
+                .progressViewStyle(.circular)
+                .tint(VoiceRouterTheme.coolCyan)
+                .frame(width: 24, height: 24)
+        case .listening:
+            VoiceWaveView(
+                level: viewModel.speechService.audioLevel,
+                barWidth: 4,
+                maxHeight: 22,
+                idleHeight: 8
+            )
+            .frame(width: 30, height: 24, alignment: .center)
+        case .processing:
+            ProgressView()
+                .progressViewStyle(.circular)
+                .tint(VoiceRouterTheme.warmAmber)
+                .frame(width: 24, height: 24)
+        case .result:
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 22))
+                .foregroundStyle(VoiceRouterTheme.success)
+        case .error:
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 20))
+                .foregroundStyle(VoiceRouterTheme.warning)
+        }
+    }
+
+    private var summaryCard: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .top, spacing: 14) {
+                BrandMarkView(
+                    size: 62,
+                    level: viewModel.speechService.audioLevel,
+                    isListening: viewModel.isCaptureActive
+                )
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(summaryTitle)
+                        .font(.system(.title3, design: .rounded))
+                        .fontWeight(.bold)
+                        .foregroundStyle(VoiceRouterTheme.textPrimary)
+
+                    Text(summarySubtitle)
+                        .font(.subheadline)
+                        .foregroundStyle(VoiceRouterTheme.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 0)
+
+                Text(summaryBadgeText)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(summaryBadgeColor)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 7)
+                    .background(
+                        Capsule(style: .continuous)
+                            .fill(summaryBadgeColor.opacity(0.14))
+                    )
+            }
+
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: 10),
+                    GridItem(.flexible(), spacing: 10)
+                ],
+                spacing: 10
+            ) {
+                summaryMetric(
+                    title: "Launch",
+                    value: "Action Button or tap",
+                    icon: "button.horizontal.top.press",
+                    tint: VoiceRouterTheme.coolCyan
+                )
+                summaryMetric(
+                    title: "Finish",
+                    value: settings.automaticallyFinishAfterPause ? pauseDurationLabel : "Manual stop",
+                    icon: settings.automaticallyFinishAfterPause ? "timer" : "hand.tap",
+                    tint: VoiceRouterTheme.freshMint
+                )
+                summaryMetric(
+                    title: "Output",
+                    value: settings.useAppleIntelligenceFormatting ? "Polished text" : "Raw transcript",
+                    icon: settings.useAppleIntelligenceFormatting ? "sparkles" : "waveform",
+                    tint: settings.useAppleIntelligenceFormatting ? VoiceRouterTheme.warmAmber : VoiceRouterTheme.coolCyan
+                )
+                summaryMetric(
+                    title: "Recognition",
+                    value: viewModel.speechService.supportsOnDeviceRecognition ? "On device when possible" : "Adaptive",
+                    icon: "bolt.fill",
+                    tint: VoiceRouterTheme.softCoral
+                )
+            }
+        }
+        .padding(20)
         .voiceRouterPanel(
-            radius: 32,
-            tint: viewModel.isListening ? VoiceRouterTheme.softCoral : VoiceRouterTheme.coolCyan
+            radius: 28,
+            tint: viewModel.isCaptureActive ? VoiceRouterTheme.softCoral : VoiceRouterTheme.coolCyan
         )
     }
 
-    private var heroCopyText: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text("Speak.\nPaste.\nMove on.")
-                .font(.system(size: 34, weight: .heavy, design: .rounded))
+    private func summaryMetric(title: String, value: String, icon: String, tint: Color) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .foregroundStyle(tint)
+                Text(title.uppercased())
+                    .font(.caption.weight(.bold))
+                    .tracking(0.8)
+                    .foregroundStyle(VoiceRouterTheme.textMuted)
+            }
+
+            Text(value)
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(VoiceRouterTheme.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
-
-            Text("Voice Router is built for the quick-capture flow: instant feedback, clean transcription, and clipboard-ready text without ceremony.")
-                .font(.system(.body, design: .rounded))
-                .foregroundStyle(VoiceRouterTheme.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            VStack(alignment: .leading, spacing: 8) {
-                featureChip(
-                    title: settings.useAppleIntelligenceFormatting ? "Formatting On" : "Raw Transcript",
-                    icon: settings.useAppleIntelligenceFormatting ? "sparkles" : "waveform"
-                )
-                featureChip(
-                    title: settings.automaticallyFinishAfterPause ? "Pause to Finish" : "Manual Stop",
-                    icon: settings.automaticallyFinishAfterPause ? "pause.circle" : "hand.tap"
-                )
-            }
         }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Color.white.opacity(0.18))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .stroke(Color.white.opacity(0.14), lineWidth: 1)
+                )
+        )
     }
 
     private var transcriptPanel: some View {
@@ -261,36 +359,34 @@ private struct CaptureViewInner: View {
             }
 
             Text(displayTranscript)
-                .font(.system(size: 26, weight: .semibold, design: .rounded))
+                .font(.system(size: 24, weight: .semibold, design: .rounded))
                 .foregroundStyle(
                     displayTranscriptIsPlaceholder
-                        ? VoiceRouterTheme.textMuted.opacity(0.86)
+                        ? VoiceRouterTheme.textMuted.opacity(0.92)
                         : VoiceRouterTheme.textPrimary
                 )
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .animation(.easeOut(duration: 0.16), value: viewModel.speechService.transcript)
+                .frame(maxWidth: .infinity, minHeight: 180, alignment: .topLeading)
+                .animation(.easeOut(duration: 0.12), value: viewModel.speechService.transcript)
 
             if let supportingMessage {
                 Text(supportingMessage)
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(VoiceRouterTheme.textSecondary.opacity(0.88))
+                    .foregroundStyle(VoiceRouterTheme.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(24)
-        .frame(maxWidth: .infinity, minHeight: 220, alignment: .topLeading)
+        .padding(22)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
         .voiceRouterPanel(
-            radius: 30,
-            tint: viewModel.isListening ? VoiceRouterTheme.coolCyan : VoiceRouterTheme.warmAmber
+            radius: 28,
+            tint: viewModel.isCaptureActive ? VoiceRouterTheme.coolCyan : VoiceRouterTheme.warmAmber
         )
     }
 
-    private var controlPanel: some View {
-        VStack(spacing: 18) {
-            Text("CAPTURE CONTROL")
-                .font(.caption.weight(.bold))
-                .tracking(1.1)
-                .foregroundStyle(VoiceRouterTheme.textMuted)
+    private var controlDock: some View {
+        VStack(spacing: 0) {
+            Divider()
+                .overlay(VoiceRouterTheme.cardStroke)
 
             Button {
                 if viewModel.isListening {
@@ -303,164 +399,147 @@ private struct CaptureViewInner: View {
                     }
                 }
             } label: {
-                ZStack {
-                    if viewModel.isListening {
+                HStack(spacing: 14) {
+                    ZStack {
                         Circle()
-                            .stroke(VoiceRouterTheme.softCoral.opacity(0.24), lineWidth: 2.5)
-                            .frame(width: 148, height: 148)
-                            .scaleEffect(pulseScale)
-                            .opacity(2.0 - Double(pulseScale))
-                            .onAppear {
-                                withAnimation(.easeOut(duration: 1.1).repeatForever(autoreverses: false)) {
-                                    pulseScale = 1.75
-                                }
-                            }
-                            .onDisappear {
-                                pulseScale = 1.0
-                            }
+                            .fill(controlButtonFill)
+                            .frame(width: 52, height: 52)
+
+                        if viewModel.isProcessing || viewModel.isArming {
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                                .tint(VoiceRouterTheme.textPrimary)
+                        } else {
+                            Image(systemName: viewModel.isListening ? "stop.fill" : "mic.fill")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundStyle(VoiceRouterTheme.textPrimary)
+                        }
                     }
 
-                    Circle()
-                        .fill(
-                            viewModel.isListening
-                                ? LinearGradient(
-                                    colors: [
-                                        VoiceRouterTheme.softCoral,
-                                        VoiceRouterTheme.warmAmber.opacity(0.86)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                                : LinearGradient(
-                                    colors: [
-                                        VoiceRouterTheme.coolCyan,
-                                        VoiceRouterTheme.freshMint
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                        )
-                        .frame(width: 118, height: 118)
-                        .shadow(
-                            color: (viewModel.isListening
-                                ? VoiceRouterTheme.softCoral
-                                : VoiceRouterTheme.coolCyan)
-                                .opacity(0.34),
-                            radius: 26,
-                            y: 12
-                        )
-                        .overlay(
-                            Circle()
-                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                        )
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(controlLabel)
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(VoiceRouterTheme.textPrimary)
 
-                    Image(systemName: viewModel.isListening ? "stop.fill" : "mic.fill")
-                        .font(.system(size: viewModel.isListening ? 30 : 38, weight: .bold))
-                        .foregroundStyle(VoiceRouterTheme.textPrimary)
+                        Text(controlHint)
+                            .font(.subheadline)
+                            .foregroundStyle(VoiceRouterTheme.textSecondary)
+                            .lineLimit(2)
+                    }
+
+                    Spacer(minLength: 0)
+
+                    if viewModel.isListening {
+                        VoiceWaveView(
+                            level: viewModel.speechService.audioLevel,
+                            barWidth: 4,
+                            maxHeight: 18,
+                            idleHeight: 8
+                        )
+                        .frame(width: 34, height: 24)
+                    } else {
+                        Image(systemName: "chevron.right.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(VoiceRouterTheme.textMuted)
+                    }
                 }
+                .padding(.horizontal, 18)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .fill(Color(uiColor: .secondarySystemBackground).opacity(0.92))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                .stroke(VoiceRouterTheme.cardStroke, lineWidth: 1)
+                        )
+                )
             }
             .buttonStyle(.plain)
-            .disabled(viewModel.isProcessing)
-
-            Text(controlLabel)
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(VoiceRouterTheme.textPrimary)
-
-            Text(controlHint)
-                .font(.subheadline)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(VoiceRouterTheme.textSecondary.opacity(0.88))
-                .padding(.horizontal, 10)
+            .disabled(viewModel.isProcessing || viewModel.isArming)
+            .padding(.horizontal, 20)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
+            .background(.thinMaterial)
         }
-        .padding(24)
-        .frame(maxWidth: .infinity)
-        .padding(.top, 6)
-        .voiceRouterPanel(
-            radius: 32,
-            tint: viewModel.isListening ? VoiceRouterTheme.softCoral : VoiceRouterTheme.coolCyan
-        )
     }
 
-    private var statusPill: some View {
-        HStack(spacing: 12) {
-            pillIndicator
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(pillTitle)
-                    .font(.system(.subheadline, design: .rounded))
-                    .fontWeight(.bold)
-                    .foregroundStyle(VoiceRouterTheme.textPrimary)
-                Text(pillSubtitle)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(VoiceRouterTheme.textSecondary.opacity(0.86))
-                    .lineLimit(1)
-            }
-
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(
-            Capsule(style: .continuous)
-                .fill(Color.black.opacity(0.76))
-                .overlay(
-                    Capsule(style: .continuous)
-                        .stroke(VoiceRouterTheme.cardStroke, lineWidth: 1)
-                )
-        )
-        .shadow(color: .black.opacity(0.25), radius: 20, y: 8)
-        .animation(.spring(response: 0.35, dampingFraction: 0.82), value: viewModel.state)
-        .animation(.spring(response: 0.25, dampingFraction: 0.85), value: viewModel.speechService.audioLevel)
+    private func toolbarIcon(systemName: String) -> some View {
+        Image(systemName: systemName)
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundStyle(VoiceRouterTheme.textPrimary)
+            .frame(width: 36, height: 36)
+            .background(
+                Circle()
+                    .fill(Color(uiColor: .secondarySystemBackground).opacity(0.92))
+            )
     }
 
-    @ViewBuilder
-    private var pillIndicator: some View {
+    private var summaryTitle: String {
         switch viewModel.state {
         case .idle:
-            Image(systemName: "mic.circle.fill")
-                .font(.system(size: 22))
-                .foregroundStyle(VoiceRouterTheme.coolCyan)
-        case .listening:
-            VoiceWaveView(
-                level: viewModel.speechService.audioLevel,
-                barWidth: 4,
-                maxHeight: 24,
-                idleHeight: 8
-            )
-            .frame(width: 30, height: 26, alignment: .center)
+            return "Ready for quick capture"
+        case .arming:
+            return "Starting capture"
+        case .listening(let source):
+            return source == .shortcut ? "Capturing from Action Button" : "Listening live"
         case .processing:
-            ProgressView()
-                .progressViewStyle(.circular)
-                .tint(VoiceRouterTheme.warmAmber)
-                .frame(width: 26, height: 26)
+            return "Finishing your text"
         case .result:
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 22))
-                .foregroundStyle(VoiceRouterTheme.success)
+            return "Clipboard updated"
         case .error:
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 20))
-                .foregroundStyle(VoiceRouterTheme.warning)
+            return "Capture needs attention"
         }
     }
 
-    private func featureChip(title: String, icon: String) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-            Text(title)
+    private var summarySubtitle: String {
+        switch viewModel.state {
+        case .idle:
+            return "One press records, a short pause can finish automatically, and the final text lands on your clipboard."
+        case .arming:
+            return "Voice Router is priming speech recognition so the waveform can start without the usual dead air."
+        case .listening:
+            return "Speak naturally. The transcript updates as you talk, and you can still tap once to finish right away."
+        case .processing(let message):
+            return message
+        case .result:
+            return "Your last capture is ready below, and the next one is one tap away."
+        case .error(let message):
+            return message
         }
-        .font(.caption.weight(.semibold))
-        .foregroundStyle(VoiceRouterTheme.textPrimary.opacity(0.92))
-        .padding(.horizontal, 10)
-        .padding(.vertical, 7)
-        .background(
-            Capsule()
-                .fill(Color.white.opacity(0.07))
-                .overlay(
-                    Capsule()
-                        .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                )
-        )
+    }
+
+    private var summaryBadgeText: String {
+        switch viewModel.state {
+        case .idle:
+            return "READY"
+        case .arming:
+            return "STARTING"
+        case .listening:
+            return "LIVE"
+        case .processing:
+            return "WORKING"
+        case .result:
+            return "DONE"
+        case .error:
+            return "CHECK"
+        }
+    }
+
+    private var summaryBadgeColor: Color {
+        switch viewModel.state {
+        case .idle:
+            return VoiceRouterTheme.coolCyan
+        case .arming:
+            return VoiceRouterTheme.freshMint
+        case .listening:
+            return VoiceRouterTheme.softCoral
+        case .processing:
+            return VoiceRouterTheme.warmAmber
+        case .result:
+            return VoiceRouterTheme.success
+        case .error:
+            return VoiceRouterTheme.warning
+        }
     }
 
     private var displayTranscript: String {
@@ -476,7 +555,11 @@ private struct CaptureViewInner: View {
             return message
         }
 
-        return "Your live transcript shows up here. If Action Button launches the app, the top capsule will pulse first so you know it’s listening."
+        if case .arming = viewModel.state {
+            return "Starting the microphone and speech recognizer now..."
+        }
+
+        return "Your live transcript appears here as soon as you start talking."
     }
 
     private var displayTranscriptIsPlaceholder: Bool {
@@ -491,6 +574,8 @@ private struct CaptureViewInner: View {
         switch viewModel.state {
         case .idle:
             return "READY"
+        case .arming:
+            return "STARTING"
         case .listening:
             return "LIVE TRANSCRIPT"
         case .processing:
@@ -506,12 +591,14 @@ private struct CaptureViewInner: View {
         switch viewModel.state {
         case .idle:
             return settings.automaticallyFinishAfterPause
-                ? "Capture ends automatically after a short pause, then the text is copied."
-                : "Tap the button again when you want to stop listening."
+                ? "Pause for about \(pauseDurationLabel.lowercased()) and Voice Router will stop automatically."
+                : "Tap the control again when you want to stop listening."
+        case .arming:
+            return "This quick warm-up makes the interface respond immediately while speech capture comes online."
         case .listening:
             return settings.automaticallyFinishAfterPause
-                ? "Pause for a beat when you’re done, or tap the button to finish right away."
-                : "Tap the button again when you’re finished speaking."
+                ? "Keep talking. The app will finish after a short pause, or you can stop it manually."
+                : "Tap the control again when you are done speaking."
         case .processing(let message):
             return message
         case .result:
@@ -524,30 +611,34 @@ private struct CaptureViewInner: View {
     private var controlLabel: String {
         switch viewModel.state {
         case .idle:
-            return "Start a capture"
+            return "Start capture"
+        case .arming:
+            return "Starting capture"
         case .listening:
-            return "Listening now"
+            return "Stop and copy"
         case .processing:
-            return "Working on it"
+            return "Preparing clipboard text"
         case .result:
-            return "Ready for another one"
+            return "Start another capture"
         case .error:
-            return "Try again"
+            return "Try capture again"
         }
     }
 
     private var controlHint: String {
         switch viewModel.state {
         case .idle:
-            return "One tap to listen, transcribe, and copy."
+            return "Fast path: tap here or use the Action Button shortcut."
+        case .arming:
+            return "Speech recognition is warming up."
         case .listening:
             return settings.automaticallyFinishAfterPause
-                ? "Keep talking. A short pause will finish the capture automatically."
-                : "Tap the button again to stop and copy."
+                ? "Pause to finish automatically, or tap now to end."
+                : "Tap now when you are ready to finish."
         case .processing:
-            return "The app is preparing the final clipboard text."
+            return "Voice Router is formatting the final clipboard text."
         case .result:
-            return "The last result is already on your clipboard."
+            return "Your last result is still on the clipboard."
         case .error:
             return "Voice Router could not start capture."
         }
@@ -557,6 +648,8 @@ private struct CaptureViewInner: View {
         switch viewModel.state {
         case .idle:
             return "Ready"
+        case .arming(let source):
+            return source == .shortcut ? "Launching from Action Button" : "Starting capture"
         case .listening(let source):
             return source == .shortcut ? "Action Button Capture" : "Listening"
         case .processing:
@@ -574,6 +667,8 @@ private struct CaptureViewInner: View {
             return settings.useAppleIntelligenceFormatting
                 ? "Will polish with Apple Intelligence when available."
                 : "Will copy the raw transcript."
+        case .arming:
+            return "Preparing audio and transcription so the capture can begin."
         case .listening:
             return "Speak now. The live transcript updates as you talk."
         case .processing(let message):
@@ -585,11 +680,24 @@ private struct CaptureViewInner: View {
         }
     }
 
+    private var controlButtonFill: LinearGradient {
+        LinearGradient(
+            colors: viewModel.isListening
+                ? [VoiceRouterTheme.softCoral, VoiceRouterTheme.warmAmber]
+                : [VoiceRouterTheme.coolCyan, VoiceRouterTheme.freshMint],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    private var pauseDurationLabel: String {
+        "\(settings.pauseDuration.formatted(.number.precision(.fractionLength(1))))s"
+    }
+
     private var isShowingResult: Bool {
         if case .result = viewModel.state {
             return true
         }
         return false
     }
-
 }
