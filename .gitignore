@@ -1,0 +1,19 @@
+# Xcode
+build/
+*.pbxproj
+*.xcworkspace
+xcuserdata/
+*.xcuserdatad
+*.xcscmblueprint
+*.xccheckout
+VoiceRouter.xcodeproj/
+
+# Derived Data
+DerivedData/
+
+# OS Files
+.DS_Store
+
+# XcodeGen
+# Uncomment if you want to ignore the generated xcodeproj
+VoiceRouter.xcodeproj/
