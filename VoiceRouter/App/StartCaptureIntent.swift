@@ -19,17 +19,15 @@ struct VoiceRouterAppShortcuts: AppShortcutsProvider {
     static var shortcutTileColor: ShortcutTileColor { .blue }
 
     static var appShortcuts: [AppShortcut] {
-        [
-            AppShortcut(
-                intent: StartCaptureIntent(),
-                phrases: [
-                    "Start capture in \(.applicationName)",
-                    "Record with \(.applicationName)",
-                    "Transcribe to clipboard in \(.applicationName)"
-                ],
-                shortTitle: "Start Capture",
-                systemImageName: "mic.badge.plus"
-            )
-        ]
+        AppShortcut(
+            intent: StartCaptureIntent(),
+            phrases: [
+                "Start capture in \(.applicationName)",
+                "Record with \(.applicationName)",
+                "Transcribe to clipboard in \(.applicationName)"
+            ],
+            shortTitle: "Start Capture",
+            systemImageName: "mic.badge.plus"
+        )
     }
 }

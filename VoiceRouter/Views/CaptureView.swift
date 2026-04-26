@@ -31,9 +31,19 @@ private struct CaptureViewInner: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                background
+        ZStack {
+            background
+
+            VStack(spacing: 0) {
+                customHeader
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                    .padding(.bottom, 16)
+
+                statusPill
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
+                    .zIndex(1)
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
@@ -54,85 +64,34 @@ private struct CaptureViewInner: View {
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 36)
-                    .padding(.top, 12)
                 }
             }
-            .safeAreaInset(edge: .top) {
-                statusPill
-                    .padding(.top, 8)
-                    .padding(.bottom, 8)
-                    .padding(.horizontal, 20)
-            }
-            .overlay(alignment: .bottom) {
-                if viewModel.showFeedbackBanner, let feedbackMessage = viewModel.feedbackMessage {
-                    Text(feedbackMessage)
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoiceRouterTheme.textPrimary)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .background(
-                            Capsule()
-                                .fill(Color.black.opacity(0.88))
-                                .overlay(
-                                    Capsule()
-                                        .stroke(VoiceRouterTheme.cardStroke, lineWidth: 1)
-                                )
-                        )
-                        .padding(.bottom, 18)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        activeSheet = .history
-                    } label: {
-                        Image(systemName: "clock.arrow.circlepath")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(VoiceRouterTheme.textPrimary)
-                            .frame(width: 38, height: 38)
-                            .background(
-                                Circle()
-                                    .fill(Color.white.opacity(0.06))
+        }
+        .overlay(alignment: .bottom) {
+            if viewModel.showFeedbackBanner, let feedbackMessage = viewModel.feedbackMessage {
+                Text(feedbackMessage)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(VoiceRouterTheme.textPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(
+                        Capsule()
+                            .fill(Color.black.opacity(0.88))
+                            .overlay(
+                                Capsule()
+                                    .stroke(VoiceRouterTheme.cardStroke, lineWidth: 1)
                             )
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                ToolbarItem(placement: .principal) {
-                    BrandLockupView(
-                        level: viewModel.speechService.audioLevel,
-                        isListening: viewModel.isListening,
-                        titleSize: 16,
-                        subtitle: nil
                     )
-                }
-
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        activeSheet = .settings
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(VoiceRouterTheme.textPrimary)
-                            .frame(width: 38, height: 38)
-                            .background(
-                                Circle()
-                                    .fill(Color.white.opacity(0.06))
-                            )
-                    }
-                    .buttonStyle(.plain)
-                }
+                    .padding(.bottom, 18)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-            .sheet(item: $activeSheet) { sheet in
-                switch sheet {
-                case .history:
-                    HistoryView()
-                case .settings:
-                    SettingsView()
-                }
+        }
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .history:
+                HistoryView()
+            case .settings:
+                SettingsView()
             }
         }
         .task {
@@ -146,6 +105,49 @@ private struct CaptureViewInner: View {
             Task {
                 await viewModel.startCapture(source: source)
             }
+        }
+    }
+
+    private var customHeader: some View {
+        HStack {
+            Button {
+                activeSheet = .history
+            } label: {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(VoiceRouterTheme.textPrimary)
+                    .frame(width: 38, height: 38)
+                    .background(
+                        Circle()
+                            .fill(Color.white.opacity(0.06))
+                    )
+            }
+            .buttonStyle(.plain)
+
+            Spacer()
+
+            BrandLockupView(
+                level: viewModel.speechService.audioLevel,
+                isListening: viewModel.isListening,
+                titleSize: 16,
+                subtitle: nil
+            )
+
+            Spacer()
+
+            Button {
+                activeSheet = .settings
+            } label: {
+                Image(systemName: "slider.horizontal.3")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(VoiceRouterTheme.textPrimary)
+                    .frame(width: 38, height: 38)
+                    .background(
+                        Circle()
+                            .fill(Color.white.opacity(0.06))
+                    )
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -183,33 +185,17 @@ private struct CaptureViewInner: View {
     }
 
     private var heroCopy: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            ViewThatFits(in: .horizontal) {
-                HStack(alignment: .top, spacing: 18) {
-                    heroCopyText
-
-                    Spacer(minLength: 0)
-
-                    BrandMarkView(
-                        size: 112,
-                        level: viewModel.speechService.audioLevel,
-                        isListening: viewModel.isListening
-                    )
-                }
-
-                VStack(alignment: .leading, spacing: 18) {
-                    HStack {
-                        Spacer(minLength: 0)
-                        BrandMarkView(
-                            size: 104,
-                            level: viewModel.speechService.audioLevel,
-                            isListening: viewModel.isListening
-                        )
-                    }
-
-                    heroCopyText
-                }
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                BrandMarkView(
+                    size: 72,
+                    level: viewModel.speechService.audioLevel,
+                    isListening: viewModel.isListening
+                )
+                Spacer()
             }
+
+            heroCopyText
 
             IslandPreviewCard(
                 title: "Action Button Cue",
@@ -231,7 +217,7 @@ private struct CaptureViewInner: View {
     private var heroCopyText: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Speak.\nPaste.\nMove on.")
-                .font(.system(size: 39, weight: .heavy, design: .rounded))
+                .font(.system(size: 34, weight: .heavy, design: .rounded))
                 .foregroundStyle(VoiceRouterTheme.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -240,28 +226,15 @@ private struct CaptureViewInner: View {
                 .foregroundStyle(VoiceRouterTheme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 10) {
-                    featureChip(
-                        title: settings.useAppleIntelligenceFormatting ? "Formatting On" : "Raw Transcript",
-                        icon: settings.useAppleIntelligenceFormatting ? "sparkles" : "waveform"
-                    )
-                    featureChip(
-                        title: settings.automaticallyFinishAfterPause ? "Pause to Finish" : "Manual Stop",
-                        icon: settings.automaticallyFinishAfterPause ? "pause.circle" : "hand.tap"
-                    )
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    featureChip(
-                        title: settings.useAppleIntelligenceFormatting ? "Formatting On" : "Raw Transcript",
-                        icon: settings.useAppleIntelligenceFormatting ? "sparkles" : "waveform"
-                    )
-                    featureChip(
-                        title: settings.automaticallyFinishAfterPause ? "Pause to Finish" : "Manual Stop",
-                        icon: settings.automaticallyFinishAfterPause ? "pause.circle" : "hand.tap"
-                    )
-                }
+            VStack(alignment: .leading, spacing: 8) {
+                featureChip(
+                    title: settings.useAppleIntelligenceFormatting ? "Formatting On" : "Raw Transcript",
+                    icon: settings.useAppleIntelligenceFormatting ? "sparkles" : "waveform"
+                )
+                featureChip(
+                    title: settings.automaticallyFinishAfterPause ? "Pause to Finish" : "Manual Stop",
+                    icon: settings.automaticallyFinishAfterPause ? "pause.circle" : "hand.tap"
+                )
             }
         }
     }
@@ -511,7 +484,7 @@ private struct CaptureViewInner: View {
             return false
         }
 
-        viewModel.speechService.transcript.isEmpty && !(viewModel.lastCapture != nil && isShowingResult)
+        return viewModel.speechService.transcript.isEmpty && !(viewModel.lastCapture != nil && isShowingResult)
     }
 
     private var panelEyebrow: String {

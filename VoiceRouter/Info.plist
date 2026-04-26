@@ -27,5 +27,7 @@
     <string>Voice Router needs microphone access to capture your spoken thoughts.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
     <string>Voice Router uses speech recognition to transcribe your voice into text.</string>
+    <key>UILaunchScreen</key>
+    <dict/>
 </dict>
 </plist>

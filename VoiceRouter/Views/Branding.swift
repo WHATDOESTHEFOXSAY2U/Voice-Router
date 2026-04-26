@@ -166,10 +166,10 @@ struct IslandPreviewCard: View {
     let isListening: Bool
 
     var body: some View {
-        HStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 16) {
             Capsule(style: .continuous)
                 .fill(Color.black.opacity(0.80))
-                .frame(width: 166, height: 58)
+                .frame(width: 150, height: 50)
                 .overlay(
                     HStack(spacing: 12) {
                         Circle()
@@ -200,7 +200,8 @@ struct IslandPreviewCard: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .padding(18)
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .voiceRouterPanel(radius: 26, tint: isListening ? VoiceRouterTheme.coolCyan : VoiceRouterTheme.warmAmber)
     }
 }
