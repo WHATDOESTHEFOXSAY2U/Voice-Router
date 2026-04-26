@@ -12,6 +12,7 @@ final class SpeechService: ObservableObject {
         case microphoneDenied
         case speechDenied
         case recognizerUnavailable
+        case requestTimedOut
 
         var guidance: String {
             switch self {
@@ -27,6 +28,8 @@ final class SpeechService: ObservableObject {
                 return "Speech recognition access is off. Enable it in Settings to transcribe."
             case .recognizerUnavailable:
                 return "Speech recognition is not available for the current language right now."
+            case .requestTimedOut:
+                return "Permission request timed out. Reopen the app or grant Microphone and Speech Recognition access in Settings."
             }
         }
     }
@@ -36,6 +39,7 @@ final class SpeechService: ObservableObject {
     @Published var audioLevel: CGFloat = 0.08
     @Published var errorMessage: String?
     @Published private(set) var authorizationStatus: AuthorizationStatus = .unknown
+    @Published private(set) var supportsOnDeviceRecognition = false
 
     var isAuthorized: Bool {
         authorizationStatus == .authorized
@@ -46,46 +50,116 @@ final class SpeechService: ObservableObject {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var hasInstalledTap = false
-    private var didPrewarmAudioEngine = false
     private var speechRecognizer: SFSpeechRecognizer?
     private var recognizerLocaleIdentifier: String?
 
-    var supportsOnDeviceRecognition: Bool {
-        currentSpeechRecognizer()?.supportsOnDeviceRecognition ?? false
-    }
-
     func ensureAuthorization() async -> Bool {
-        if isAuthorized {
-            prewarmForQuickCapture()
-            return true
-        }
-
         authorizationStatus = .requesting
         errorMessage = nil
 
-        guard currentSpeechRecognizer() != nil else {
-            authorizationStatus = .recognizerUnavailable
+        switch audioSession.recordPermission {
+        case .granted:
+            break
+        case .denied:
+            authorizationStatus = .microphoneDenied
             errorMessage = authorizationStatus.guidance
             return false
-        }
+        case .undetermined:
+            let microphoneResolution = await requestMicrophonePermission()
 
-        let hasMicrophoneAccess = await requestMicrophonePermission()
-        guard hasMicrophoneAccess else {
+            switch microphoneResolution {
+            case .granted:
+                break
+            case .denied:
+                authorizationStatus = .microphoneDenied
+                errorMessage = authorizationStatus.guidance
+                return false
+            case .timedOut:
+                authorizationStatus = .requestTimedOut
+                errorMessage = authorizationStatus.guidance
+                return false
+            }
+        @unknown default:
             authorizationStatus = .microphoneDenied
             errorMessage = authorizationStatus.guidance
             return false
         }
 
-        let speechStatus = await requestSpeechPermission()
-        guard speechStatus == .authorized else {
+        switch SFSpeechRecognizer.authorizationStatus() {
+        case .authorized:
+            break
+        case .denied, .restricted:
+            authorizationStatus = .speechDenied
+            errorMessage = authorizationStatus.guidance
+            return false
+        case .notDetermined:
+            let speechResolution = await requestSpeechPermission()
+
+            switch speechResolution {
+            case .authorized:
+                break
+            case .denied:
+                authorizationStatus = .speechDenied
+                errorMessage = authorizationStatus.guidance
+                return false
+            case .timedOut:
+                authorizationStatus = .requestTimedOut
+                errorMessage = authorizationStatus.guidance
+                return false
+            }
+        @unknown default:
             authorizationStatus = .speechDenied
             errorMessage = authorizationStatus.guidance
             return false
         }
 
+        guard let recognizer = currentSpeechRecognizer() else {
+            authorizationStatus = .recognizerUnavailable
+            errorMessage = authorizationStatus.guidance
+            return false
+        }
+
+        supportsOnDeviceRecognition = recognizer.supportsOnDeviceRecognition
         authorizationStatus = .authorized
-        prewarmForQuickCapture()
         return true
+    }
+
+    func refreshAuthorizationState() {
+        errorMessage = nil
+
+        switch audioSession.recordPermission {
+        case .denied:
+            authorizationStatus = .microphoneDenied
+            supportsOnDeviceRecognition = false
+            return
+        case .undetermined:
+            authorizationStatus = .unknown
+            supportsOnDeviceRecognition = false
+            return
+        case .granted:
+            break
+        @unknown default:
+            authorizationStatus = .unknown
+            supportsOnDeviceRecognition = false
+            return
+        }
+
+        switch SFSpeechRecognizer.authorizationStatus() {
+        case .authorized:
+            authorizationStatus = .authorized
+        case .denied, .restricted:
+            authorizationStatus = .speechDenied
+            supportsOnDeviceRecognition = false
+            return
+        case .notDetermined:
+            authorizationStatus = .unknown
+            supportsOnDeviceRecognition = false
+            return
+        @unknown default:
+            authorizationStatus = .unknown
+            supportsOnDeviceRecognition = false
+            return
+        }
     }
 
     func startRecording() throws {
@@ -100,6 +174,7 @@ final class SpeechService: ObservableObject {
         guard recognizer.isAvailable else {
             throw SpeechError.recognizerUnavailable
         }
+        supportsOnDeviceRecognition = recognizer.supportsOnDeviceRecognition
 
         if isRecording {
             stopRecording()
@@ -165,10 +240,7 @@ final class SpeechService: ObservableObject {
         audioLevel = 0.08
         errorMessage = nil
 
-        if !didPrewarmAudioEngine {
-            audioEngine.prepare()
-            didPrewarmAudioEngine = true
-        }
+        audioEngine.prepare()
         try audioEngine.start()
         isRecording = true
     }
@@ -191,44 +263,76 @@ final class SpeechService: ObservableObject {
         audioLevel = 0.08
 
         try? audioSession.setActive(false, options: .notifyOthersOnDeactivation)
-        prewarmForQuickCapture()
     }
 
-    func prewarmForQuickCapture() {
-        guard isAuthorized else { return }
-
-        do {
-            try audioSession.setCategory(.record, mode: .measurement, options: [.duckOthers, .allowBluetooth])
-            try audioSession.setPreferredIOBufferDuration(0.005)
-        } catch {
-            // Best-effort prewarm only.
+    private func requestMicrophonePermission() async -> PermissionResolution {
+        if audioSession.recordPermission == .granted {
+            return .granted
         }
 
-        Task.detached {
-            _ = await self.currentSpeechRecognizer()?.isAvailable
-            _ = await self.currentSpeechRecognizer()?.supportsOnDeviceRecognition
-            
-            let engine = await self.audioEngine
-            engine.prepare()
-            
-            await MainActor.run {
-                self.didPrewarmAudioEngine = true
-            }
+        if audioSession.recordPermission == .denied {
+            return .denied
         }
-    }
 
-    private func requestMicrophonePermission() async -> Bool {
         await withCheckedContinuation { continuation in
+            var didResume = false
+
+            func resume(_ result: PermissionResolution) {
+                guard !didResume else { return }
+                didResume = true
+                continuation.resume(returning: result)
+            }
+
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 8_000_000_000)
+                resume(.timedOut)
+            }
+
             AVAudioApplication.requestRecordPermission { granted in
-                continuation.resume(returning: granted)
+                Task { @MainActor in
+                    resume(granted ? .granted : .denied)
+                }
             }
         }
     }
 
-    private func requestSpeechPermission() async -> SFSpeechRecognizerAuthorizationStatus {
+    private func requestSpeechPermission() async -> PermissionResolution {
+        switch SFSpeechRecognizer.authorizationStatus() {
+        case .authorized:
+            return .authorized
+        case .denied, .restricted:
+            return .denied
+        case .notDetermined:
+            break
+        @unknown default:
+            return .denied
+        }
+
         await withCheckedContinuation { continuation in
+            var didResume = false
+
+            func resume(_ result: PermissionResolution) {
+                guard !didResume else { return }
+                didResume = true
+                continuation.resume(returning: result)
+            }
+
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 8_000_000_000)
+                resume(.timedOut)
+            }
+
             SFSpeechRecognizer.requestAuthorization { status in
-                continuation.resume(returning: status)
+                Task { @MainActor in
+                    switch status {
+                    case .authorized:
+                        resume(.authorized)
+                    case .denied, .restricted, .notDetermined:
+                        resume(.denied)
+                    @unknown default:
+                        resume(.denied)
+                    }
+                }
             }
         }
     }
@@ -280,5 +384,12 @@ final class SpeechService: ObservableObject {
                 return "Speech recognition is unavailable for the current language."
             }
         }
+    }
+
+    private enum PermissionResolution {
+        case granted
+        case authorized
+        case denied
+        case timedOut
     }
 }

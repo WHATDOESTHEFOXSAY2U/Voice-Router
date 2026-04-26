@@ -2,18 +2,21 @@ import SwiftUI
 
 struct CaptureView: View {
     @EnvironmentObject private var captureStore: CaptureStore
+    @EnvironmentObject private var launchCenter: CaptureLaunchCenter
     @EnvironmentObject private var speechService: SpeechService
     @EnvironmentObject private var settings: AppSettingsStore
 
     var body: some View {
         CaptureViewInner(speechService: speechService)
             .environmentObject(captureStore)
+            .environmentObject(launchCenter)
             .environmentObject(settings)
     }
 }
 
 private struct CaptureViewInner: View {
     @EnvironmentObject private var captureStore: CaptureStore
+    @EnvironmentObject private var launchCenter: CaptureLaunchCenter
     @EnvironmentObject private var settings: AppSettingsStore
     @StateObject private var viewModel: CaptureViewModel
     @State private var activeSheet: ActiveSheet?
@@ -64,10 +67,9 @@ private struct CaptureViewInner: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 24)
                 }
+
+                controlDock
             }
-        }
-        .safeAreaInset(edge: .bottom) {
-            controlDock
         }
         .overlay(alignment: .bottom) {
             if viewModel.showFeedbackBanner, let feedbackMessage = viewModel.feedbackMessage {
@@ -87,6 +89,7 @@ private struct CaptureViewInner: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 94)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .allowsHitTesting(false)
             }
         }
         .sheet(item: $activeSheet) { sheet in
@@ -98,16 +101,17 @@ private struct CaptureViewInner: View {
             }
         }
         .task {
-            await viewModel.prepare(settings: settings)
+            viewModel.prepare()
+
+            if let source = launchCenter.consumePendingCapture() {
+                await viewModel.startCapture(source: source)
+            }
         }
         .onChange(of: viewModel.speechService.transcript) { _ in
             viewModel.handleTranscriptChanged(store: captureStore, settings: settings)
         }
-        .onChange(of: settings.useAppleIntelligenceFormatting) { _ in
-            viewModel.prewarmForCurrentSettings(settings)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .startCapture)) { notification in
-            let source = notification.object as? CaptureLaunchSource ?? .manual
+        .onReceive(launchCenter.$pendingSource.compactMap { $0 }) { source in
+            _ = launchCenter.consumePendingCapture()
             Task {
                 await viewModel.startCapture(source: source)
             }
@@ -461,8 +465,11 @@ private struct CaptureViewInner: View {
             .disabled(viewModel.isProcessing || viewModel.isArming)
             .padding(.horizontal, 20)
             .padding(.top, 12)
-            .padding(.bottom, 8)
-            .background(.thinMaterial)
+            .padding(.bottom, 12)
+            .background(
+                Color(uiColor: .systemBackground)
+                    .opacity(0.92)
+            )
         }
     }
 

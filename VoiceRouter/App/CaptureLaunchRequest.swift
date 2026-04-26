@@ -40,5 +40,4 @@ enum CaptureLaunchRequest {
 
 extension Notification.Name {
     static let captureLaunchQueued = Notification.Name("voicerouter.captureLaunchQueued")
-    static let startCapture = Notification.Name("voicerouter.startCapture")
 }

@@ -6,6 +6,7 @@ struct VoiceRouterApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     @StateObject private var captureStore = CaptureStore()
+    @StateObject private var launchCenter = CaptureLaunchCenter()
     @StateObject private var speechService = SpeechService()
     @StateObject private var settings = AppSettingsStore()
 
@@ -17,41 +18,26 @@ struct VoiceRouterApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(captureStore)
+                .environmentObject(launchCenter)
                 .environmentObject(speechService)
                 .environmentObject(settings)
                 .task {
-                    schedulePendingCaptureDispatch()
+                    launchCenter.loadPendingCaptureIfNeeded()
                 }
                 .onChange(of: scenePhase) { newPhase in
                     guard newPhase == .active else { return }
-                    schedulePendingCaptureDispatch()
+                    launchCenter.loadPendingCaptureIfNeeded()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .captureLaunchQueued)) { _ in
-                    schedulePendingCaptureDispatch()
+                    launchCenter.loadPendingCaptureIfNeeded()
                 }
                 .onOpenURL { url in
                     guard url.scheme == "voicerouter", url.host == "capture" else { return }
                     CaptureLaunchRequest.queue(source: .urlScheme)
                     DispatchQueue.main.async {
-                        schedulePendingCaptureDispatch()
+                        launchCenter.loadPendingCaptureIfNeeded()
                     }
                 }
         }
-    }
-
-    private func schedulePendingCaptureDispatch() {
-        dispatchPendingCaptureIfNeeded()
-
-        let retryDelays: [TimeInterval] = [0.18, 0.55, 1.1]
-        for delay in retryDelays {
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                dispatchPendingCaptureIfNeeded()
-            }
-        }
-    }
-
-    private func dispatchPendingCaptureIfNeeded() {
-        guard let source = CaptureLaunchRequest.consumeIfNeeded() else { return }
-        NotificationCenter.default.post(name: .startCapture, object: source)
     }
 }

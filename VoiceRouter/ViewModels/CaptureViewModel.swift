@@ -53,15 +53,8 @@ final class CaptureViewModel: ObservableObject {
         return false
     }
 
-    func prepare(settings: AppSettingsStore) async {
-        _ = await speechService.ensureAuthorization()
-        speechService.prewarmForQuickCapture()
-        formatter.prewarmIfPossible(preferFormatting: settings.useAppleIntelligenceFormatting)
-    }
-
-    func prewarmForCurrentSettings(_ settings: AppSettingsStore) {
-        speechService.prewarmForQuickCapture()
-        formatter.prewarmIfPossible(preferFormatting: settings.useAppleIntelligenceFormatting)
+    func prepare() {
+        speechService.refreshAuthorizationState()
     }
 
     func startCapture(source: CaptureLaunchSource = .manual) async {
