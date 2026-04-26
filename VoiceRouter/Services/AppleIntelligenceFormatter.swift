@@ -27,8 +27,7 @@ final class AppleIntelligenceFormatter {
         """
 
 #if canImport(FoundationModels)
-    @available(iOS 26.0, *)
-    private var session: LanguageModelSession?
+    private var _session: Any?
 #endif
 
     func availabilityStatus() -> AppleIntelligenceAvailabilityStatus {
@@ -155,12 +154,12 @@ final class AppleIntelligenceFormatter {
 #if canImport(FoundationModels)
     @available(iOS 26.0, *)
     private func sessionIfNeeded() -> LanguageModelSession {
-        if let session {
+        if let session = _session as? LanguageModelSession {
             return session
         }
 
         let created = LanguageModelSession(instructions: Self.formattingInstructions)
-        session = created
+        _session = created
         return created
     }
 #endif

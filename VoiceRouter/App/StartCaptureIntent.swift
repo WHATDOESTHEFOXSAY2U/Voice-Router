@@ -3,7 +3,6 @@ import AppIntents
 struct StartCaptureIntent: AppIntent {
     static var title: LocalizedStringResource = "Start Voice Capture"
     static var description = IntentDescription("Open Voice Router and immediately start listening for clipboard-ready text.")
-    static var supportedModes: IntentModes { .foreground(.immediate) }
 
     func perform() async throws -> some IntentResult {
         CaptureLaunchRequest.queue(source: .shortcut)
@@ -20,17 +19,15 @@ struct VoiceRouterAppShortcuts: AppShortcutsProvider {
     static var shortcutTileColor: ShortcutTileColor { .blue }
 
     static var appShortcuts: [AppShortcut] {
-        [
-            AppShortcut(
-                intent: StartCaptureIntent(),
-                phrases: [
-                    "Start voice capture in \(.applicationName)",
-                    "Record with \(.applicationName)",
-                    "Transcribe to clipboard in \(.applicationName)"
-                ],
-                shortTitle: "Start Voice Capture",
-                systemImageName: "mic.circle.fill"
-            )
-        ]
+        AppShortcut(
+            intent: StartCaptureIntent(),
+            phrases: [
+                "Start voice capture in \(.applicationName)",
+                "Record with \(.applicationName)",
+                "Transcribe to clipboard in \(.applicationName)"
+            ],
+            shortTitle: "Start Voice Capture",
+            systemImageName: "mic.circle.fill"
+        )
     }
 }
